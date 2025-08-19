@@ -1,5 +1,10 @@
 import fastify from 'fastify'
-import crypto from 'node:crypto'
+import { validatorCompiler, serializerCompiler, type ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
+import { fastifySwagger } from '@fastify/swagger'
+import scalarAPIReference from '@scalar/fastify-api-reference'
+import { createCourseRoute } from './src/routes/create-course.ts'
+import { getCourseByIdRoute } from './src/routes/get-course-by-id.ts'
+import { getCoursesRoute } from './src/routes/get-courses.ts'
 
 const server = fastify({
   logger: {
@@ -11,51 +16,31 @@ const server = fastify({
       },
     },
   }
-})
+}).withTypeProvider<ZodTypeProvider>()
 
-const courses = [
-  { id: '1', title: "Curso de Node.js" }
-]
-
-server.get('/courses', () => {
-  return { courses }
-})
-
-server.get('/courses/:id', (request, reply) => {
-  type Params = {
-    id: string
-  }
-
-  const { id: courseId } = request.params as Params
-
-  const course = courses.find(course => course.id === courseId)
-
-  if (course) {
-    return { course }
-  }
-
-  return reply.status(404).send()
-})
-
-server.post('/courses', (request, reply) => {
-  type Body = {
-    title: string
-  }
-
-  const courseId = crypto.randomUUID()
-  const { title: courseTitle} = request.body as Body
-
-  if (!courseTitle) {
-    return reply.status(400).send({ message: 'Required title' })
-  }
-
-  courses.push({
-    id: courseId,
-    title: courseTitle
+if (process.env.NODE_ENV === 'development') {
+  server.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: 'Desafio Node.js',
+        version: '1.0.0'
+      }
+    },
+    transform: jsonSchemaTransform
   })
+}
 
-  return reply.status(201).send({ courseId })
+
+server.register(scalarAPIReference, {
+  routePrefix: '/docs'
 })
+
+server.setValidatorCompiler(validatorCompiler)
+server.setSerializerCompiler(serializerCompiler)
+
+server.register(createCourseRoute)
+server.register(getCourseByIdRoute)
+server.register(getCoursesRoute)
 
 server.listen({ port: 3333 }).then(() => {
   console.log('HTTP server running!')
