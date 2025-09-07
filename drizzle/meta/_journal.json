@@ -15,6 +15,34 @@
       "when": 1755640774248,
       "tag": "0001_jittery_outlaw_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757261197127,
+      "tag": "0002_normal_surge",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757261283787,
+      "tag": "0003_handy_pyro",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1757262141253,
+      "tag": "0004_skinny_vin_gonzales",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1757262457421,
+      "tag": "0005_stormy_wind_dancer",
+      "breakpoints": true
     }
   ]
 }
